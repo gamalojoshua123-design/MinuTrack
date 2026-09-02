@@ -1,0 +1,178 @@
+/* ============================================================
+   CASHIER TOUCH / SPEED ERGONOMICS  (shared)
+   ============================================================
+   Loaded by cashier/header.php, so it applies to every cashier
+   page: pos, cashier_inventory, start_shift, transactions,
+   x_reading, z_reading.
+
+   Goal: make the cashier screens behave like a real POS terminal
+   — large, unambiguous tap targets, readable numbers at a glance,
+   and no fiddly controls that slow down a busy counter.
+
+   Deliberately scoped to touch/pointer ergonomics only; page
+   layouts and colour schemes are left to each page's own CSS.
+   ============================================================ */
+
+/* ── 1. Minimum tap targets ───────────────────────────────────
+   Anything a cashier taps should clear ~44px, the practical
+   minimum for a fingertip on a tablet. */
+.btn-header,
+.filter-btn,
+.btn-modal,
+.page-btn,
+.action-dropdown-toggle,
+.btn-confirm,
+.btn-cancel {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Dropdown menu rows (View/Print receipt, etc.) */
+.action-dropdown-menu a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ── 2. Form controls ─────────────────────────────────────────
+   16px inputs stop iOS/iPadOS from zooming the viewport on focus,
+   which is disorienting mid-transaction. */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="search"],
+input[type="password"],
+select,
+textarea {
+    font-size: 16px;
+    min-height: 44px;
+}
+
+/* ── 3. Money should be scannable at arm's length ───────────── */
+.amount-col,
+.summary-value,
+.stat-value,
+.payment-change,
+.cart-item-subtotal {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+/* ── 4. Clear pressed-state feedback ──────────────────────────
+   On a touchscreen there's no hover, so without an active state a
+   cashier can't tell whether a tap registered. */
+   Scoped to touch devices: on a mouse these elements already have a
+   hover lift, and adding a scale() on click would REPLACE that lift
+   and make the button appear to drop on every click. */
+@media (hover: none) {
+    button:active:not(:disabled),
+    .btn-header:active,
+    .filter-btn:active,
+    .page-btn:active {
+        transform: scale(0.97);
+    }
+}
+
+button,
+.btn-header,
+.filter-btn,
+.page-btn,
+.action-dropdown-toggle {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* removes the 300ms double-tap delay */
+}
+
+/* Disabled controls must look unmistakably dead */
+button:disabled,
+.btn-header[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── 4b. Kill "sticky hover" lift on touch devices ────────────
+   Several pages lift elements on :hover (transform: translateY(-2px)).
+   A touchscreen has no real hover, so a tap applies :hover and it
+   STAYS applied until the user taps somewhere else — the button
+   visibly jumps up and stays up. Neutralise the lift where hover
+   isn't a real capability; mouse users keep the effect.
+   !important is needed to beat selectors like
+   `.btn-add:hover:not(:disabled)`. */
+@media (hover: none) {
+    .btn:hover,
+    .btn-add:hover,
+    .btn-add:hover:not(:disabled),
+    .btn-checkout:hover,
+    .btn-checkout:hover:not(:disabled),
+    .btn-confirm:hover,
+    .btn-cancel:hover,
+    .btn-clear:hover,
+    .btn-header:hover,
+    .filter-btn:hover,
+    .page-btn:hover,
+    .cat-chip:hover,
+    .qc-btn:hover,
+    .qc-btn:hover:not(:disabled),
+    .product-card:hover,
+    .stat-card:hover,
+    .centered-stat-card:hover,
+    .mid-btn-primary:hover,
+    .mid-btn-secondary:hover,
+    .btn-close:hover,
+    .toast:hover,
+    .action-dropdown-toggle:hover {
+        transform: none !important;
+    }
+
+    /* The press feedback should come from :active only, which is
+       momentary and therefore can't get stuck. */
+    button:active:not(:disabled) {
+        transform: scale(0.97) !important;
+    }
+}
+
+/* ── 5. Tables: roomier rows, sticky headers ──────────────────
+   Cashiers scan transaction lists while serving; tight rows cause
+   mis-taps and losing your place when scrolling. */
+@media (pointer: coarse) {
+    .data-table td {
+        padding-top: 0.8rem;
+        padding-bottom: 0.8rem;
+    }
+
+    .data-table th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+}
+
+/* ── 6. Momentum scrolling inside panels ─────────────────────- */
+.table-container,
+.cart-items,
+.products-grid,
+.alert-list,
+.modal-content {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain; /* don't scroll the page behind a panel */
+}
+
+/* ── 7. Respect reduced-motion preferences ───────────────────- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── 8. Don't let long text break layouts on narrow tablets ── */
+.cart-item-name,
+.product-name,
+.alert-name {
+    overflow-wrap: anywhere;
+}

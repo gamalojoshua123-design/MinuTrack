@@ -1,0 +1,255 @@
+/* ============================================================
+   SHARED RESPONSIVE LAYOUT
+   ============================================================
+   Purpose: stop every page hand-rolling its own media queries.
+   Use these primitives in markup instead of writing new
+   per-page layout CSS.
+
+   Prefixes are deliberately `l-` (layout) and `u-` (utility):
+   both are unused elsewhere in this codebase and, unlike
+   Bootstrap's `.card` / `.btn` / `.row` / `.table`, they cannot
+   collide with the ~1,300 existing class usages.
+
+   ------------------------------------------------------------
+   STANDARD BREAKPOINTS  (use these, not new ad-hoc values)
+   ------------------------------------------------------------
+     phone      max-width:  480px
+     tablet     max-width:  768px
+     desktop    min-width: 1024px
+     wide       min-width: 1280px
+
+   The codebase already leans on 768 / 480 / 1024 (71 of ~91
+   existing queries). Strays like 767px, 769px, 600px and 900px
+   are off-by-one hacks — migrate them to the four above.
+
+   NOTE: CSS custom properties cannot be used inside a media
+   query condition, so the numbers are written literally here.
+   ============================================================ */
+
+
+/* ────────────────────────────────────────────────────────────
+   1. APP SHELL — a screen that fills the viewport and never
+      scrolls the page itself (POS, dashboards, kiosk views).
+   ──────────────────────────────────────────────────────────── */
+.l-app {
+    display: flex;
+    flex-direction: column;
+    /* iOS Safari reports 100vh TALLER than the visible area, so a
+       vh-locked shell hides its own bottom edge behind the browser
+       toolbars. dvh tracks the real height; vh stays as fallback. */
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+/* A region that takes the leftover space in an .l-app column.
+   min-height:0 is the important part — see the warning in §7. */
+.l-fill {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* A region that scrolls internally rather than growing the page. */
+.l-scroll {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+/* A region that must never be shrunk by its siblings — totals
+   bars, action footers, anything that has to stay on screen. */
+.l-pin {
+    flex-shrink: 0;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   2. SPLIT — a main/side two-column layout that stacks on
+      tablet. Width of the side column is configurable.
+
+      <div class="l-split" style="--l-side: 380px"> … </div>
+   ──────────────────────────────────────────────────────────── */
+.l-split {
+    display: grid;
+    grid-template-columns: 1fr var(--l-side, 360px);
+    gap: var(--l-gap, 1rem);
+    min-height: 0;
+}
+
+@media (max-width: 1024px) {
+    .l-split {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   3. GRID — responsive card/tile grid. Set the minimum column
+      width; the browser decides the column count.
+
+      <div class="l-grid" style="--l-min: 150px"> … </div>
+
+      Use .l-grid--fixed4 etc. when a specific count matters more
+      than a minimum width (e.g. a POS product grid on tablet).
+   ──────────────────────────────────────────────────────────── */
+.l-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--l-min, 200px), 1fr));
+    gap: var(--l-gap, 1rem);
+    align-content: start;
+}
+
+.l-grid--fixed4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.l-grid--fixed3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.l-grid--fixed2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+@media (max-width: 768px) {
+    .l-grid--fixed4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .l-grid--fixed3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 480px) {
+    .l-grid--fixed4,
+    .l-grid--fixed3,
+    .l-grid--fixed2 { grid-template-columns: 1fr; }
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   4. STACK / CLUSTER — vertical and horizontal groupings with
+      consistent gaps, so pages stop inventing margins.
+   ──────────────────────────────────────────────────────────── */
+.l-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--l-gap, 1rem);
+}
+
+.l-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--l-gap, 0.75rem);
+}
+
+/* Filter bars, toolbars: side-by-side normally, stacked on phones
+   so controls stay full-width and tappable. */
+@media (max-width: 768px) {
+    .l-cluster--stack-sm {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   5. TABLES — wide tables scroll horizontally inside their own
+      box instead of forcing the whole page sideways.
+   ──────────────────────────────────────────────────────────── */
+.l-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+.l-table-wrap > table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Below this width a table is unreadable; give it a floor and let
+   the wrapper scroll rather than crushing the columns. */
+@media (max-width: 768px) {
+    .l-table-wrap > table {
+        min-width: 560px;
+    }
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   6. UTILITIES
+   ──────────────────────────────────────────────────────────── */
+.u-nowrap   { white-space: nowrap; }
+.u-wrap-any { overflow-wrap: anywhere; }
+
+/* Single-line ellipsis. Needs min-width:0 on flex parents (§7). */
+.u-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+/* Tabular figures so money columns align and don't jitter as
+   values change width. */
+.u-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Responsive visibility */
+@media (max-width: 768px) {
+    .u-hide-sm { display: none !important; }
+}
+
+@media (min-width: 769px) {
+    .u-only-sm { display: none !important; }
+}
+
+@media (max-width: 480px) {
+    .u-hide-xs { display: none !important; }
+}
+
+/* Media that never overflows its container */
+.u-media {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   7. THE FLEXBOX GOTCHA THAT KEEPS BITING THIS CODEBASE
+   ────────────────────────────────────────────────────────────
+   A flex item defaults to `min-width: auto` / `min-height: auto`,
+   meaning it REFUSES to shrink below its content size. Two real
+   bugs in this app came from exactly that:
+
+     • A long product name in the POS cart pushed into the
+       quantity buttons and line total, because the text block
+       had no `min-width: 0`.
+
+     • The POS cart item list collapsed to zero height because a
+       sibling summary block was `flex-shrink: 0` and the list had
+       `min-height: 0` with nothing holding it open.
+
+   Rules of thumb:
+     - Flex child holding text that must shrink → `min-width: 0`
+       (or use .u-truncate).
+     - Flex child that must scroll → `min-height: 0` + overflow
+       (or use .l-fill.l-scroll).
+     - Flex child that must never be squeezed → `.l-pin`.
+     - A scrolling region needs a *floor* too, or a growing sibling
+       can crush it to nothing.
+   ──────────────────────────────────────────────────────────── */
+.l-fill--floor {
+    flex: 1 1 auto;
+    min-height: var(--l-floor, 90px);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   8. PRINT — receipts and reports
+   ──────────────────────────────────────────────────────────── */
+@media print {
+    .u-no-print { display: none !important; }
+
+    .l-app {
+        height: auto;
+        overflow: visible;
+    }
+
+    .l-scroll {
+        overflow: visible;
+    }
+}

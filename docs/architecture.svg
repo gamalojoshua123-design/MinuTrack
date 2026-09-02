@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="950" viewBox="0 0 1440 950" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5b6b7c"/>
+    </marker>
+    <marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a9aab"/>
+    </marker>
+    <style>
+      .lane  { fill:#f6f9fc; stroke:#d3dfea; stroke-width:1.2; rx:12; }
+      .lanet { font-size:12px; font-weight:700; fill:#8798a8; letter-spacing:1.4px; }
+      .box   { rx:8; stroke-width:1.5; }
+      .t     { font-size:14.5px; font-weight:700; fill:#16242f; }
+      .s     { font-size:11.5px; fill:#5b6b7c; }
+      .p     { font-size:10.5px; font-weight:700; fill:#7c8a99; letter-spacing:.4px; }
+      .edge  { stroke:#5b6b7c; stroke-width:1.6; fill:none; marker-end:url(#arw); }
+      .bus   { stroke:#5b6b7c; stroke-width:1.6; fill:none; }
+      .edger { stroke:#8a9aab; stroke-width:1.5; fill:none; marker-end:url(#arwd); stroke-dasharray:5 4; }
+      .el    { font-size:11.5px; fill:#43566a; }
+      .elr   { font-size:11px; fill:#8a9aab; }
+      .title { font-size:23px; font-weight:700; fill:#12202c; }
+      .sub   { font-size:13px; fill:#6b7d90; }
+    </style>
+  </defs>
+
+  <rect width="1440" height="950" fill="#ffffff"/>
+  <text x="40" y="46" class="title">Minute Burger POS &#8212; System Architecture</text>
+  <text x="40" y="68" class="sub">PHP / MariaDB on XAMPP, no framework. Read top to bottom: every request enters through bootstrap.php, is gated by RBAC, then reaches a module.</text>
+
+  <rect class="lane" x="40" y="90" width="1360" height="110"/>
+  <text x="56" y="112" class="lanet">1 &#183; CLIENTS (BROWSER)</text>
+  <rect class="box" x="70" y="124" width="300" height="60" fill="#fff3e0" stroke="#e8a33d"/>
+  <text x="88" y="148" class="t">Cashier</text>
+  <text x="88" y="168" class="s">POS terminal, receipts, X/Z reading</text>
+  <rect class="box" x="400" y="124" width="300" height="60" fill="#fff3e0" stroke="#e8a33d"/>
+  <text x="418" y="148" class="t">Owner / Admin</text>
+  <text x="418" y="168" class="s">dashboard, users, roles, branches</text>
+  <rect class="box" x="730" y="124" width="300" height="60" fill="#fff3e0" stroke="#e8a33d"/>
+  <text x="748" y="148" class="t">Inventory Staff</text>
+  <text x="748" y="168" class="s">stock counts, suppliers, recipes</text>
+  <rect class="box" x="1060" y="124" width="310" height="60" fill="#fff3e0" stroke="#e8a33d"/>
+  <text x="1078" y="148" class="t">Manager / Branch Owner</text>
+  <text x="1078" y="168" class="s">branch-scoped reports</text>
+
+  <path class="bus" d="M220,184 L220,224 M550,184 L550,224 M880,184 L880,224 M1215,184 L1215,224 M220,224 L1215,224"/>
+  <path class="edge" d="M720,224 L720,262"/>
+  <text x="732" y="248" class="el">HTTP request &#183; session cookie</text>
+
+  <rect class="lane" x="40" y="262" width="1360" height="96"/>
+  <text x="56" y="284" class="lanet">2 &#183; ENTRY POINT &#8212; EVERY PAGE INCLUDES THIS FIRST</text>
+  <rect class="box" x="70" y="292" width="1300" height="56" fill="#e8f1fb" stroke="#5b8fd0"/>
+  <text x="90" y="316" class="t">bootstrap.php</text>
+  <text x="90" y="336" class="s">config.php (.env, CSP, session hardening) &#8594; includes/db_connect.php ($pdo) &#8594; includes/auth.php &#8594; includes/functions.php</text>
+
+  <path class="edge" d="M720,348 L720,392"/>
+  <text x="732" y="376" class="el">session user &#8594; permission check</text>
+
+  <rect class="lane" x="40" y="392" width="1360" height="150"/>
+  <text x="56" y="414" class="lanet">3 &#183; RBAC / AUTH LAYER &#8212; THE GATEKEEPER</text>
+  <rect class="box" x="70" y="424" width="300" height="94" fill="#fdecec" stroke="#d9635f"/>
+  <text x="88" y="450" class="t">permission_catalog.php</text>
+  <text x="88" y="472" class="s">the list of permission names</text>
+  <text x="88" y="490" class="s">pos_access, inventory_manage,</text>
+  <text x="88" y="508" class="s">reports_view, users_manage &#8230;</text>
+  <rect class="box" x="420" y="424" width="300" height="94" fill="#fdecec" stroke="#d9635f"/>
+  <text x="438" y="450" class="t">role_permission_matrix.php</text>
+  <text x="438" y="472" class="s">role &#8594; default permissions</text>
+  <text x="438" y="490" class="s">admin, manager, cashier,</text>
+  <text x="438" y="508" class="s">inventory_staff, branch_owner</text>
+  <rect class="box" x="770" y="424" width="320" height="94" fill="#fdecec" stroke="#d9635f"/>
+  <text x="788" y="450" class="t">rbac.php &#8212; runtime engine</text>
+  <text x="788" y="472" class="s">hasPermission() / requirePermission()</text>
+  <text x="788" y="490" class="s">reads the session permission list</text>
+  <text x="788" y="508" class="s">getAssignableRoles()</text>
+  <rect class="box" x="1140" y="424" width="230" height="94" fill="#fdecec" stroke="#d9635f"/>
+  <text x="1158" y="450" class="t">Branch scope</text>
+  <text x="1158" y="472" class="s">getCurrentBranchId()</text>
+  <text x="1158" y="490" class="s">branch_view_id override</text>
+  <text x="1158" y="508" class="s">(owner &#8220;view as branch&#8221;)</text>
+  <path class="edge" d="M370,471 L416,471"/>
+  <text x="372" y="464" class="elr">names</text>
+  <path class="edge" d="M720,471 L766,471"/>
+  <text x="722" y="464" class="elr">grants</text>
+  <path class="edge" d="M1090,471 L1136,471"/>
+  <text x="1092" y="464" class="elr">scope</text>
+
+  <path class="edge" d="M720,542 L720,586"/>
+  <text x="732" y="570" class="el">allowed &#8212; otherwise redirect to auth/unauthorized.php</text>
+
+  <rect class="lane" x="40" y="586" width="1360" height="170"/>
+  <text x="56" y="608" class="lanet">4 &#183; APPLICATION MODULES &#8212; EACH DECLARES THE PERMISSION IT REQUIRES</text>
+  <rect class="box" x="70" y="620" width="250" height="124" fill="#eaf6ef" stroke="#4c9d72"/>
+  <text x="88" y="646" class="t">POS / Sales</text>
+  <text x="88" y="668" class="s">cashier/pos.php</text>
+  <text x="88" y="686" class="s">transactions, receipt</text>
+  <text x="88" y="704" class="s">start_shift, x/z_reading</text>
+  <text x="88" y="730" class="p">PERM: POS_ACCESS</text>
+  <rect class="box" x="336" y="620" width="250" height="124" fill="#eaf6ef" stroke="#4c9d72"/>
+  <text x="354" y="646" class="t">Inventory</text>
+  <text x="354" y="668" class="s">inventory/inventory.php</text>
+  <text x="354" y="686" class="s">inventory_count, suppliers</text>
+  <text x="354" y="704" class="s">admin/inventory_recipes.php</text>
+  <text x="354" y="730" class="p">PERM: INVENTORY_MANAGE</text>
+  <rect class="box" x="602" y="620" width="240" height="124" fill="#eaf6ef" stroke="#4c9d72"/>
+  <text x="620" y="646" class="t">Products</text>
+  <text x="620" y="668" class="s">products/products.php</text>
+  <text x="620" y="686" class="s">admin/products.php</text>
+  <text x="620" y="704" class="s">product_ingredients.php</text>
+  <text x="620" y="730" class="p">PERM: PRODUCTS_MANAGE</text>
+  <rect class="box" x="858" y="620" width="250" height="124" fill="#dff0e7" stroke="#2e7d5b" stroke-width="2"/>
+  <text x="876" y="646" class="t">Reports</text>
+  <text x="876" y="668" class="s">reports/reports.php</text>
+  <text x="876" y="686" class="s">admin/reports.php (owner)</text>
+  <text x="876" y="704" class="s">branch-scoped, Excel export</text>
+  <text x="876" y="730" class="p">PERM: REPORTS_VIEW</text>
+  <rect class="box" x="1124" y="620" width="246" height="124" fill="#eaf6ef" stroke="#4c9d72"/>
+  <text x="1142" y="646" class="t">Users &amp; Branches</text>
+  <text x="1142" y="668" class="s">admin/users.php, roles.php</text>
+  <text x="1142" y="686" class="s">admin/branches.php</text>
+  <text x="1142" y="704" class="s">admin/switch_branch.php</text>
+  <text x="1142" y="730" class="p">PERM: USERS_MANAGE</text>
+
+  <path class="bus" d="M195,744 L195,768 M461,744 L461,768 M722,744 L722,768 M983,744 L983,768 M1249,744 L1249,768 M195,768 L1249,768"/>
+  <path class="edge" d="M330,768 L330,802"/>
+  <text x="520" y="762" class="el">all SQL goes through the shared PDO handle, filtered by branch_id</text>
+
+  <rect class="lane" x="40" y="776" width="1360" height="140"/>
+  <text x="56" y="798" class="lanet">5 &#183; DATA &amp; EXTERNAL SERVICES</text>
+  <rect class="box" x="70" y="806" width="520" height="94" fill="#e3ecf6" stroke="#3a6ea5" stroke-width="2"/>
+  <text x="90" y="834" class="t">MariaDB &#8212; pos_system</text>
+  <text x="90" y="856" class="s">reached only through the shared PDO connection</text>
+  <text x="90" y="876" class="s">schema: pos_system (2).sql + migrations/</text>
+  <rect class="box" x="670" y="806" width="280" height="94" fill="#f1ecfb" stroke="#8b6fd0"/>
+  <text x="688" y="834" class="t">AI Assistant</text>
+  <text x="688" y="856" class="s">ai/ai_helper.php, ai_endpoint.php</text>
+  <text x="688" y="876" class="s">gated behind reports_view</text>
+  <rect class="box" x="1090" y="806" width="280" height="94" fill="#f7f1e6" stroke="#b08a4a"/>
+  <text x="1108" y="834" class="t">Groq API (external)</text>
+  <text x="1108" y="856" class="s">GROQ_API_KEY from .env</text>
+  <text x="1108" y="876" class="s">chat completions over HTTPS</text>
+
+  <path class="edge" d="M590,838 L666,838"/>
+  <text x="566" y="828" class="elr">read-only aggregates</text>
+  <path class="edge" d="M950,836 L1086,836"/>
+  <text x="958" y="828" class="elr">prompt + context</text>
+  <path class="edger" d="M1086,872 L954,872"/>
+  <text x="962" y="890" class="elr">response</text>
+</svg>
