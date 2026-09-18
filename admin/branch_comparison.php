@@ -114,10 +114,10 @@ $trend_values_json = json_encode(array_values($trend_data));
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Branch Sales Comparison - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     
     <!-- CHART.JS v2 - WORKS ON ALL TABLETS -->
-    <script src="/minute1/assets/js/chart.v2.min.js"></script>
+    <script src="<?= BASE_URL ?>assets/js/chart.v2.min.js"></script>
     
     <style>
         .filter-bar {

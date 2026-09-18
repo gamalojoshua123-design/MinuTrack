@@ -316,7 +316,7 @@ function buildPermissionsMap($role, $catalog) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     <style>
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
         .modal.show { display: flex; }

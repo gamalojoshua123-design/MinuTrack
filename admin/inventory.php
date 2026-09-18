@@ -144,7 +144,7 @@ foreach ($inventory_items as $item) {
     <meta name="csrf-token" content="<?php echo htmlspecialchars(getCsrfToken()); ?>">
     <title>Inventory - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     <style>
         /* Additional styles for inventory */
         .low-stock {

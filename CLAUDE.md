@@ -36,6 +36,8 @@ Roles (checked via `includes/auth.php` helpers `isOwner()`/`isAdmin()`, `isManag
 
 **AI assistant**: `ai/ai_helper.php` + `ai/ai_endpoint.php` implement a chat endpoint backed by the Groq API (`GROQ_API_KEY`), gated behind the `reports_view` permission. Exposed to admins as a floating chatbot widget (`admin/includes/ai_chatbot_widget.php`), not embedded per-page.
 
+**URLs**: never hardcode `/minute1/`. Build absolute paths from the `BASE_URL` constant (defined in `config.php`, always with leading and trailing slash, e.g. `/minute1/` or `/`), e.g. `header('Location: ' . BASE_URL . 'auth/login.php')` in PHP and `href="<?= BASE_URL ?>assets/css/admin.css"` in markup. It is auto-detected from the document root, can be overridden with `APP_BASE_PATH` in `.env`, and is what lets the app be deployed to any folder or a domain root.
+
 **Security headers/session config** are centralized in `config.php` (CSP, X-Frame-Options, session cookie hardening) — don't re-set these ad hoc in individual pages.
 
 ## Styling & responsive layout

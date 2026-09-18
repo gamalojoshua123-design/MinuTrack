@@ -79,7 +79,7 @@ extract(getDashboardStats($pdo));
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     <style>
         .welcome-banner {
             display: flex;
@@ -260,7 +260,7 @@ extract(getDashboardStats($pdo));
                         <p class="welcome-sub">Here's what's happening across your business today.</p>
                     </div>
                     <div class="welcome-actions">
-                        <a href="/minute1/cashier/pos.php" class="welcome-btn solid"><i class='bx bx-cart'></i> Open POS</a>
+                        <a href="<?= BASE_URL ?>cashier/pos.php" class="welcome-btn solid"><i class='bx bx-cart'></i> Open POS</a>
                         <a href="reports.php" class="welcome-btn ghost"><i class='bx bx-bar-chart'></i> Reports</a>
                     </div>
                 </div>

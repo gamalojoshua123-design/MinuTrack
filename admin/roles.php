@@ -75,7 +75,7 @@ foreach ($roles as $r) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roles &amp; Permissions - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     <style>
         .roles-layout {
             display: grid;

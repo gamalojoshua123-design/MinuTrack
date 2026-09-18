@@ -123,7 +123,7 @@ if ($is_owner) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cashiers - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     <style>
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
         .stat-card { background: var(--bg-card); border-radius: var(--radius); padding: 1.25rem; border: 1px solid var(--border); }

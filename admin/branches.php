@@ -194,7 +194,7 @@ $current_branch_view_id = $branch_view_active ? (int)$_SESSION['branch_view_id']
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Branches - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     <style>
         .branch-card {
             background: var(--bg-card);

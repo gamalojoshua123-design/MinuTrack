@@ -9,11 +9,11 @@ if (isset($_SESSION['user_id'])) {
 
     // Determine redirect based on role
     if (isOwner()) {
-        $redirect_url = '/minute1/admin/dashboard.php';
+        $redirect_url = BASE_URL . 'admin/dashboard.php';
     } elseif (isManager()) {
-        $redirect_url = '/minute1/ai/admin.php';
+        $redirect_url = BASE_URL . 'ai/admin.php';
     } else {
-        $redirect_url = '/minute1/cashier/pos.php';
+        $redirect_url = BASE_URL . 'cashier/pos.php';
     }
 ?>
 <!DOCTYPE html>
@@ -145,7 +145,7 @@ if (isset($_SESSION['user_id'])) {
 <body>
     <div class="welcome-card">
         <div class="welcome-logo">
-            <img src="/minute1/img/logo%20(1)/mblogo%20(1).png" alt="Minute Burger" onerror="this.parentElement.innerHTML='🍔'">
+            <img src="<?= BASE_URL ?>img/logo%20(1)/mblogo%20(1).png" alt="Minute Burger" onerror="this.parentElement.innerHTML='🍔'">
         </div>
         <div class="welcome-label">Welcome to</div>
         <div class="welcome-title">
@@ -323,7 +323,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="floating-decoration"></div>
         <div class="hero-content">
             <div class="hero-logo">
-                <img src="/minute1/img/logo%20(1)/mblogo%20(1).png" alt="Minute Burger Logo" onerror="this.parentElement.innerHTML='🍔'">
+                <img src="<?= BASE_URL ?>img/logo%20(1)/mblogo%20(1).png" alt="Minute Burger Logo" onerror="this.parentElement.innerHTML='🍔'">
             </div>
             <h1 class="hero-title">Minute <span>Burger</span></h1>
             <p class="hero-subtitle">Point of Sale &amp; Business Management System</p>

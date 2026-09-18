@@ -60,6 +60,31 @@ define('BASE_PATH', __DIR__ . '/');
 define('INCLUDES_PATH', __DIR__ . '/includes/');
 define('ADMIN_PATH', BASE_PATH . 'admin/');
 
+/**
+ * URL path the app is served from, always with leading and trailing slash:
+ * '/minute1/' on XAMPP, '/' when installed at a domain root.
+ * Priority: APP_BASE_PATH (env/.env) > auto-detected from DOCUMENT_ROOT > '/minute1/'.
+ */
+function mb_detect_base_url(): string {
+    $configured = getenv('APP_BASE_PATH');
+    if ($configured === false || trim($configured) === '') {
+        $configured = '/minute1/';
+        $docRoot = empty($_SERVER['DOCUMENT_ROOT']) ? false : realpath($_SERVER['DOCUMENT_ROOT']);
+        $appDir  = realpath(__DIR__);
+        if ($docRoot !== false && $appDir !== false) {
+            $docRoot = rtrim(str_replace('\\', '/', $docRoot), '/');
+            $appDir  = str_replace('\\', '/', $appDir);
+            if (strncasecmp($appDir . '/', $docRoot . '/', strlen($docRoot) + 1) === 0) {
+                $configured = substr($appDir, strlen($docRoot));
+            }
+        }
+    }
+    // Path characters only, so the value is safe inside HTML, JS strings and Location headers.
+    $path = trim(preg_replace('#[^A-Za-z0-9/_.~-]#', '', $configured), '/');
+    return $path === '' ? '/' : '/' . $path . '/';
+}
+define('BASE_URL', mb_detect_base_url());
+
 // Security headers
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');

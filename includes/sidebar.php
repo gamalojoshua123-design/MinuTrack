@@ -5,7 +5,7 @@ $is_owner = isOwner();
 $branch_name = $_SESSION['branch_name'] ?? 'All Branches';
 $role_label = getRoleLabel($_SESSION['role'] ?? 'user');
 
-$base_path = '/minute1/';
+$base_path = BASE_URL;
 
 // Role-appropriate dashboard landing page
 if ($is_owner) {
@@ -35,7 +35,7 @@ function isActive($pages) {
     <div class="sidebar-inner">
     <div class="sidebar-header">
         <div class="sidebar-logo">
-            <img src="/minute1/img/logo (1)/mblogo (1).png" alt="Minute Burger" onerror="this.parentElement.innerHTML='🍔'">
+            <img src="<?= BASE_URL ?>img/logo (1)/mblogo (1).png" alt="Minute Burger" onerror="this.parentElement.innerHTML='🍔'">
         </div>
         <div class="sidebar-title">
             Minute Burger
