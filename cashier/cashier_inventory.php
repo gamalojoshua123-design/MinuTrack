@@ -13,6 +13,13 @@ if (!hasPermission('inventory_view')) {
 
 $page_title = 'Inventory View';
 
+// Inventory is per-branch: never list or mutate stock belonging to another branch.
+$branch_id = getCurrentBranchId();
+$branch_id = ($branch_id === null) ? null : (int) $branch_id;
+$branch_sql = $branch_id === null ? '' : ' AND branch_id = ?';
+$branch_params = $branch_id === null ? [] : [$branch_id];
+$update_message = '';
+
 // Handle stock update form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stock'])) {
     requireCsrfToken();
@@ -21,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stock'])) {
 
     if ($quantity > 0 && $item_id > 0) {
         try {
-            $stmt = $pdo->prepare("SELECT item_name, quantity FROM inventory WHERE id = ? AND deleted_at IS NULL");
-            $stmt->execute([$item_id]);
+            $stmt = $pdo->prepare("SELECT item_name, quantity FROM inventory WHERE id = ? AND deleted_at IS NULL" . $branch_sql);
+            $stmt->execute(array_merge([$item_id], $branch_params));
             $item = $stmt->fetch();
 
             if (!$item) {
@@ -71,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_restock'])) {
 
     if ($item_id > 0 && $request_quantity > 0) {
         try {
-            $stmt = $pdo->prepare("SELECT item_name, quantity, min_stock FROM inventory WHERE id = ? AND deleted_at IS NULL");
-            $stmt->execute([$item_id]);
+            $stmt = $pdo->prepare("SELECT item_name, quantity, min_stock FROM inventory WHERE id = ? AND deleted_at IS NULL" . $branch_sql);
+            $stmt->execute(array_merge([$item_id], $branch_params));
             $item = $stmt->fetch();
 
             if (!$item) {
@@ -118,8 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_update'])) {
                 $quantity = intval($bulk_quantities[$item_id] ?? 0);
 
                 if ($quantity > 0) {
-                    $stmt = $pdo->prepare("SELECT item_name, quantity FROM inventory WHERE id = ? AND deleted_at IS NULL");
-                    $stmt->execute([$item_id]);
+                    $stmt = $pdo->prepare("SELECT item_name, quantity FROM inventory WHERE id = ? AND deleted_at IS NULL" . $branch_sql);
+                    $stmt->execute(array_merge([$item_id], $branch_params));
                     $item = $stmt->fetch();
 
                     if ($item) {
@@ -166,14 +173,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_update'])) {
 }
 
 // Fetch inventory items
-$stmt = $pdo->prepare("SELECT * FROM inventory WHERE deleted_at IS NULL ORDER BY 
+$stmt = $pdo->prepare("SELECT * FROM inventory WHERE deleted_at IS NULL" . $branch_sql . " ORDER BY 
     CASE 
         WHEN quantity <= 0 THEN 1
         WHEN quantity <= min_stock THEN 2
         ELSE 3
     END, 
     item_name ASC");
-$stmt->execute();
+$stmt->execute($branch_params);
 $inventory_items = $stmt->fetchAll();
 
 $total_items = count($inventory_items);

@@ -72,6 +72,12 @@ ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_samesite', 'Lax');
 ini_set('session.use_strict_mode', 1);
 ini_set('session.use_only_cookies', 1);
+// Over HTTPS (online host), send the session cookie only on secure connections.
+// Plain-HTTP local XAMPP is unaffected.
+if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')) {
+    ini_set('session.cookie_secure', 1);
+}
 
 // Session settings
 if (session_status() === PHP_SESSION_NONE) {
