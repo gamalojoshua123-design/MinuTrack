@@ -1,10 +1,14 @@
 # Secrets — never commit these
 .env
 *.env
+.env.*
 !.env.example
 
-# Runtime / generated artifacts
+# Runtime / generated artifacts (backups contain full DB dumps incl. password hashes)
 tools/backups/*.sql
+tools/backups/*.sql.gz
+backups/*
+*.log
 phpinfo.php
 test_*.php
 

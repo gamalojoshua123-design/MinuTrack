@@ -1,0 +1,17 @@
+# MinuTrack - Apache access rules (no URL rewriting; direct .php URLs unchanged)
+# Requires Apache 2.4 (XAMPP and standard cPanel/shared hosts).
+
+# No directory listings (e.g. /assets/images/products/)
+Options -Indexes
+
+# Never serve secrets, database dumps, logs or docs directly.
+# .env holds DB_PASS and GROQ_API_KEY; *.sql dumps contain user password hashes.
+<FilesMatch "^\.|\.(sql|gz|log|md|ini|bak)$|^(readme\.txt|_tmp_schema\.php)$">
+    Require all denied
+</FilesMatch>
+
+# Folders that must not be reachable over HTTP:
+#   migrations/     one-off schema scripts (003_run.php, 005_rbac.php) - run once, never publicly
+#   tools/backups/  automatic full-database backups (downloaded via tools/download_auto_backup.php)
+#   backups/, docs/ local backup + documentation folders
+RedirectMatch 403 (?i)^.*/(migrations|tools/backups|backups|docs|\.git)(/|$)
