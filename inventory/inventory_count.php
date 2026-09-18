@@ -48,7 +48,7 @@ $counts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($page_title) ?> - Minute Burger</title>
-    <link rel="icon" type="image/png" href="/minute1/img/logo%20(1)/mblogo%20(1).png">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>img/logo%20(1)/mblogo%20(1).png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="../assets/css/admin.css" rel="stylesheet">
     <style>

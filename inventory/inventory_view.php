@@ -744,7 +744,7 @@ foreach ($inventory_items as $item) {
 <body>
     <div class="header">
         <div class="logo">
-            <img src="/minute1/img/logo (1)/mblogo (1).png" alt="Minute Burger">
+            <img src="<?= BASE_URL ?>img/logo (1)/mblogo (1).png" alt="Minute Burger">
             <span>Minute Burger</span>
         </div>
         <div class="user-info">

@@ -2,7 +2,7 @@
 require_once __DIR__ . '/bootstrap.php';
 requirePermission('reports_view');
 if (!isOwner() && !isManager()) {
-    header('Location: /minute1/auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
+    header('Location: ' . BASE_URL . 'auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
     exit();
 }
 
@@ -187,10 +187,10 @@ $dow_json = json_encode($dow_data);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     
     <!-- Use Chart.js v2 - Works on all devices including old tablets -->
-    <script src="/minute1/assets/js/chart.v2.min.js"></script>
+    <script src="<?= BASE_URL ?>assets/js/chart.v2.min.js"></script>
     
     <!-- Fallback: If local v2 fails, load from CDN -->
     <script>

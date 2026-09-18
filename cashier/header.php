@@ -10,7 +10,7 @@ function isCaActive($pages) {
 <!-- Shared cashier touch/speed ergonomics (applies to every page that
      includes this header). Loaded before the per-page <style> blocks so
      pages can still override it where they need to. -->
-<link rel="stylesheet" href="/minute1/assets/css/cashier-touch.css?v=<?php echo @filemtime(__DIR__ . '/../assets/css/cashier-touch.css') ?: '1'; ?>">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/cashier-touch.css?v=<?php echo @filemtime(__DIR__ . '/../assets/css/cashier-touch.css') ?: '1'; ?>">
 <style>
     /* ═══════════════ CASHIER HEADER (SHARED) ═══════════════ */
     .pos-header {

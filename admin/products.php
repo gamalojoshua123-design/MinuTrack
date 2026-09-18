@@ -147,7 +147,7 @@ $inventory_items = $stmt->fetchAll();
     <meta name="csrf-token" content="<?php echo htmlspecialchars(getCsrfToken()); ?>">
     <title>Products - Minute Burger Admin</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/minute1/assets/css/admin.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/admin.css">
     <style>
         .product-section { margin-bottom: 2.5rem; }
         .product-section:first-child { margin-top: 0.25rem; }
@@ -361,7 +361,7 @@ $inventory_items = $stmt->fetchAll();
                                                             <div class="product-image-small">
                                                                 <?php
                                                                 $image_filename = $product['image'] ?? '';
-                                                                $image_path = '/minute1/assets/images/products/' . $image_filename;
+                                                                $image_path = BASE_URL . 'assets/images/products/' . $image_filename;
                                                                 if ($image_filename && $image_filename !== 'default-product.png' && file_exists(__DIR__ . '/../assets/images/products/' . $image_filename)): ?>
                                                                     <img src="<?php echo $image_path; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                                                                 <?php else: ?>
@@ -555,7 +555,7 @@ $inventory_items = $stmt->fetchAll();
 
                                 if (data.image && data.image !== 'default-product.png' && preview && previewImg) {
                                     preview.style.display = 'block';
-                                    previewImg.src = '/minute1/assets/images/products/' + data.image;
+                                    previewImg.src = '<?= BASE_URL ?>assets/images/products/' + data.image;
                                 } else if (preview) {
                                     preview.style.display = 'none';
                                 }

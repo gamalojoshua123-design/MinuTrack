@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../config.php'; // BASE_URL, session hardening
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -82,7 +84,7 @@ function getUserBranchId()
 
 function getLoginUrl()
 {
-    return '/minute1/auth/login.php';
+    return BASE_URL . 'auth/login.php';
 }
 
 function isLoggedIn()
@@ -162,7 +164,7 @@ function requireOwner()
 {
     requireAuth();
     if (!isOwner()) {
-        header('Location: /minute1/auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
+        header('Location: ' . BASE_URL . 'auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
         exit();
     }
 }
@@ -176,7 +178,7 @@ function requireManager()
 {
     requireAuth();
     if (!isManager() && !isOwner()) {
-        header('Location: /minute1/auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
+        header('Location: ' . BASE_URL . 'auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
         exit();
     }
 }
@@ -185,7 +187,7 @@ function requireCashier()
 {
     requireAuth();
     if (!isCashier() && !isManager() && !isOwner()) {
-        header('Location: /minute1/auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
+        header('Location: ' . BASE_URL . 'auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
         exit();
     }
 }
@@ -207,12 +209,12 @@ function requireBranchAccess($target_branch_id = null)
     $user_branch_id = getCurrentBranchId();
 
     if ($user_branch_id === null) {
-        header('Location: /minute1/auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
+        header('Location: ' . BASE_URL . 'auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
         exit();
     }
 
     if ($target_branch_id !== null && (int)$user_branch_id !== (int)$target_branch_id) {
-        header('Location: /minute1/auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
+        header('Location: ' . BASE_URL . 'auth/unauthorized.php?page=' . urlencode($_SERVER['PHP_SELF']));
         exit();
     }
 }

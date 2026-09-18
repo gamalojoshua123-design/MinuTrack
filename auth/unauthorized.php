@@ -9,16 +9,16 @@ $is_logged_in = isset($_SESSION['user_id']);
 
 // Role-based dashboard link
 if (isOwner()) {
-    $dashboard_url = '/minute1/admin/dashboard.php';
+    $dashboard_url = BASE_URL . 'admin/dashboard.php';
 } elseif (isManager()) {
-    $dashboard_url = '/minute1/ai/admin.php';
+    $dashboard_url = BASE_URL . 'ai/admin.php';
 } else {
-    $dashboard_url = '/minute1/cashier/pos.php';
+    $dashboard_url = BASE_URL . 'cashier/pos.php';
 }
 
 // Get referrer for back button
 $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-$back_url = !empty($referrer) ? $referrer : (isset($_SESSION['last_page']) ? $_SESSION['last_page'] : '/minute1/cashier/pos.php');
+$back_url = !empty($referrer) ? $referrer : (isset($_SESSION['last_page']) ? $_SESSION['last_page'] : BASE_URL . 'cashier/pos.php');
 
 if (!isset($_SESSION['last_page']) && isset($_SERVER['REQUEST_URI'])) {
     $_SESSION['last_page'] = $_SERVER['REQUEST_URI'];
@@ -374,7 +374,7 @@ if (!isset($_SESSION['last_page']) && isset($_SERVER['REQUEST_URI'])) {
             }
 
             // Final fallback
-            window.location.href = '/minute1/cashier/pos.php';
+            window.location.href = '<?= BASE_URL ?>cashier/pos.php';
         }
 
         // Escape key goes back

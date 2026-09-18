@@ -20,7 +20,7 @@ if (isset($_SESSION['user_id'])) {
 
     if ($active_shift) {
         // Has active shift — redirect to close it (keep session for shift close flow)
-        header('Location: /minute1/cashier/z_reading.php?mode=logout');
+        header('Location: ' . BASE_URL . 'cashier/z_reading.php?mode=logout');
         exit();
     }
 }

@@ -192,7 +192,7 @@ function hasAnyPermission($permissions)
 function denyAccess($page = null)
 {
     auditLog('unauthorized_access', 'auth', 'page', $page, 'denied');
-    header('Location: /minute1/auth/unauthorized.php?page=' . urlencode($page ?? ($_SERVER['PHP_SELF'] ?? '')));
+    header('Location: ' . BASE_URL . 'auth/unauthorized.php?page=' . urlencode($page ?? ($_SERVER['PHP_SELF'] ?? '')));
     exit();
 }
 

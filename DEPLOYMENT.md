@@ -25,13 +25,19 @@ GitHub (source) ──► PHP web host (Apache + PHP + MySQL/MariaDB, HTTPS)
 
 ---
 
-## 2. Important: the URL path must be `/minute1/`
+## 2. Where to install (URL path)
 
-The app hardcodes the path `/minute1/` in about 40 places (stylesheets, redirects, logo, sidebar links, the AI chatbot endpoint, product image URLs). **Upload the files into a folder named `minute1`** inside the web root:
+The app works from any folder or from a domain root. `config.php` works out the URL path automatically (the `BASE_URL` constant) by comparing the app folder with the web server's document root:
+
+| Install location | URL | Detected path |
+|---|---|---|
+| `public_html/minute1/` | `https://your-domain.com/minute1/` | `/minute1/` |
+| `public_html/pos/` | `https://your-domain.com/pos/` | `/pos/` |
+| directly in `public_html/`, or a subdomain's own folder | `https://pos.your-domain.com/` | `/` |
 
 ```
 public_html/
-└── minute1/          ← all MinuTrack files go here
+└── minute1/          ← e.g. all MinuTrack files go here
     ├── index.php
     ├── config.php
     ├── .htaccess
@@ -39,9 +45,13 @@ public_html/
     └── ...
 ```
 
-The app is then served at **`https://your-domain.com/minute1/`**.
+**Override:** if detection gets it wrong (symlinked folders, Apache `Alias`, or a reverse proxy that changes the path), set it explicitly in `.env`:
 
-If you install it at the domain root (`https://pos.your-domain.com/`) or in a folder with a different name, pages will load **without CSS** and redirects will return 404. Supporting another path means replacing the hardcoded `/minute1/` references with a configurable base path. That is a separate code change and has not been made.
+```ini
+APP_BASE_PATH=/pos/
+```
+
+Use `/` for a domain root. If it can't detect anything, the app falls back to `/minute1/`. A wrong path shows up as pages **without CSS** and 404s after login.
 
 ---
 
@@ -79,7 +89,7 @@ The dump contains your existing live data: branches, products, inventory, orders
 
 ## 4. Configuration (`.env`)
 
-All configuration comes from a `.env` file in the `minute1/` folder, which `config.php` reads. Real server environment variables take priority over `.env`. **`.env` is git-ignored, so create it on the server** (in the File Manager, copy `.env.example` to `.env`):
+All configuration comes from a `.env` file in the app folder, which `config.php` reads. Real server environment variables take priority over `.env`. **`.env` is git-ignored, so create it on the server** (in the File Manager, copy `.env.example` to `.env`):
 
 ```ini
 DB_HOST=localhost
@@ -87,6 +97,7 @@ DB_NAME=cpuser_minutrack
 DB_USER=cpuser_mtuser
 DB_PASS=your-strong-db-password
 GROQ_API_KEY=your_groq_api_key_here
+# APP_BASE_PATH=/minute1/   (optional; auto-detected, see section 2)
 ```
 
 - `DB_HOST` is `localhost` on most shared hosts. Some hosts (e.g. InfinityFree) give a hostname such as `sql123.example.com`; check your panel.
@@ -94,7 +105,7 @@ GROQ_API_KEY=your_groq_api_key_here
 - `GROQ_API_KEY` is needed only for the AI assistant. Without it the rest of the POS works normally.
 - If the file manager hides dotfiles, turn on "Show hidden files".
 
-**Application URL:** nothing needs to be configured. The app uses path-only URLs (`/minute1/...`), so any domain works as long as the folder is `minute1`.
+**Application URL:** nothing needs to be configured. The app uses path-only URLs built from the detected install path (section 2), so any domain works. Set `APP_BASE_PATH` only if detection is wrong.
 
 **Timezone:** the app runs on Asia/Manila time. `includes/db_connect.php` sets the MySQL session to `+08:00`, so `NOW()` in sales, shifts and reports matches PHP even when the host runs on UTC or US time.
 
@@ -110,7 +121,7 @@ GROQ_API_KEY=your_groq_api_key_here
 
 Typical permissions on shared hosting are folders `755` and files `644`. If uploads fail, set the two folders above to `775`. Avoid `777`.
 
-Images are stored as **file names only** in the database and served from `/minute1/assets/images/products/` and `/minute1/img/`. There are no Windows `C:\xampp` paths, so all existing images work on the host once the folders are uploaded.
+Images are stored as **file names only** in the database and served from `assets/images/products/` and `img/` under the install path. There are no Windows `C:\xampp` paths, so all existing images work on the host once the folders are uploaded.
 
 ---
 
@@ -136,11 +147,11 @@ Other security points:
 ## 7. Upload procedure
 
 1. Download the repo from GitHub (*Code → Download ZIP*) or `git clone` it on a VPS.
-2. Upload its contents into `public_html/minute1/` (File Manager → upload the ZIP → Extract). Do **not** upload `.claude/`, `.codegraph/`, `.superpowers/`, `.opencode/` or `_tmp_schema.php`.
+2. Upload its contents into your chosen folder, e.g. `public_html/minute1/` (File Manager → upload the ZIP → Extract). Do **not** upload `.claude/`, `.codegraph/`, `.superpowers/`, `.opencode/` or `_tmp_schema.php`.
 3. Create `.env` (section 4).
 4. Import the database (section 3).
 5. Set writable folders (section 5).
-6. Enable SSL, then open `https://your-domain.com/minute1/`.
+6. Enable SSL, then open the app URL, e.g. `https://your-domain.com/minute1/`.
 
 To update later, upload the changed files over the old ones. Never overwrite `.env`, `assets/images/products/` or `tools/backups/` on the server, because they hold live data.
 
@@ -151,7 +162,7 @@ To update later, upload the changed files over the old ones. Never overwrite `.e
 Test on a PC **and** on an Android phone **and** an iPhone (Chrome/Safari):
 
 ```text
-[ ] Homepage  https://your-domain.com/minute1/  redirects to the login page, page is styled (CSS loads)
+[ ] Homepage (e.g. https://your-domain.com/minute1/) redirects to the login page, page is styled (CSS loads)
 [ ] Padlock shown (HTTPS), no mixed-content warnings
 [ ] Login works with an existing account; wrong password is rejected
 [ ] Welcome page shows the Minute Burger logo, then redirects by role
@@ -166,7 +177,7 @@ Test on a PC **and** on an Android phone **and** an iPhone (Chrome/Safari):
 [ ] AI assistant widget answers (only if GROQ_API_KEY is set)
 [ ] Backup: create and download a backup from the app
 [ ] Logout, then back button does not reveal protected pages
-[ ] These return 403 Forbidden:
+[ ] These return 403 Forbidden:  (paths shown for a /minute1/ install)
       /minute1/.env
       /minute1/database_pos_system.sql
       /minute1/tools/backups/
@@ -177,6 +188,6 @@ Test on a PC **and** on an Android phone **and** an iPhone (Chrome/Safari):
 Troubleshooting:
 
 - **"Database connection failed"**: check `.env` values and `DB_HOST`, and that the user is added to the database.
-- **Unstyled pages / 404 after login**: the folder is not named `minute1` (section 2).
+- **Unstyled pages / 404 after login**: the detected install path is wrong. Set `APP_BASE_PATH` in `.env` (section 2).
 - **500 error on every page**: the host does not allow `Options` in `.htaccess`. Remove the `Options -Indexes` line.
 - **Image upload fails**: set `assets/images/products/` to be writable.

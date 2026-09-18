@@ -791,7 +791,7 @@ if (isset($pdo)) {
         showAITyping();
 
         // Determine base URL for ai_endpoint.php
-        var endpointUrl = '/minute1/ai/ai_endpoint.php';
+        var endpointUrl = '<?= BASE_URL ?>ai/ai_endpoint.php';
 
         fetch(endpointUrl, {
             method: 'POST',
